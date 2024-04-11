@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 import './App.css'
 
-const pollQuestion = {
+const pollData = {
 	questions: [
 		{
 			questionId: '1',
@@ -12,62 +12,143 @@ const pollQuestion = {
 			questionId: '2',
 			question: 'Escolha um número de 100 a 200?',
 			questionType: 'numeric'
+		},
+		{
+			questionId: '3',
+			question: 'O quanto você gosta de nirvana?',
+			questionType: 'satisfaction'
+		},
+		{
+			questionId: '4',
+			question: 'O quanto você gosta da música buddy?',
+			questionType: 'satisfaction'
+		}
+	],
+	privateResponses: [
+		{
+			userId: 'PusOCJGtL6cSrAhN8oePaUybLR42',
+			location: {
+				city: 'Londrina',
+				country: 'Brasil',
+				district: 'Palhano 2',
+				geohashNearby: [Array],
+				number: '50',
+				postalCode: '86055-650',
+				state: 'Paraná',
+				street: 'Rua Guilherme Farel',
+			},
+			responses: [
+				{
+					questionId: '1',
+					questionType: 'textual',
+					response: 'Galinha',
+				},
+				{
+					questionId: '2',
+					questionType: 'numerical',
+					response: 55,
+				},
+				{
+					questionId: '3',
+					questionType: 'satisfaction',
+					response: 2,
+				},
+				{
+					questionId: '4',
+					questionType: 'satisfaction',
+					response: 4,
+				},
+				{
+					questionId: '5',
+					questionType: 'binary',
+					response: false,
+				},
+				{
+					questionId: '6',
+					questionType: 'binary',
+					response: true,
+				},
+			],
+		},
+		{
+			userId: 'PusOCJGtL6cSrAhN8oePaUybLR42',
+			location: {
+				city: 'Londrina',
+				country: 'Brasil',
+				district: 'Palhano 2',
+				geohashNearby: [Array],
+				number: '50',
+				postalCode: '86055-650',
+				state: 'Paraná',
+				street: 'Rua Guilherme Farel',
+			},
+			responses: [
+				{
+					questionId: '1',
+					questionType: 'textual',
+					response: 'Pato',
+				},
+				{
+					questionId: '2',
+					questionType: 'numerical',
+					response: 30,
+				},
+				{
+					questionId: '3',
+					questionType: 'satisfaction',
+					response: 1,
+				},
+				{
+					questionId: '4',
+					questionType: 'satisfaction',
+					response: 4,
+				},
+				{
+					questionId: '4',
+					questionType: 'satisfaction',
+					response: 3,
+				},
+				{
+					questionId: '5',
+					questionType: 'binary',
+					response: true,
+				},
+				{
+					questionId: '6',
+					questionType: 'binary',
+					response: true,
+				},
+			],
 		}
 	]
 }
 
-const pollData = [
-	{
-		userId: 'PusOCJGtL6cSrAhN8oePaUybLR42',
-		location: {
-			city: 'Londrina',
-			country: 'Brasil',
-			district: 'Palhano 2',
-			geohashNearby: [Array],
-			number: '50',
-			postalCode: '86055-650',
-			state: 'Paraná',
-			street: 'Rua Guilherme Farel',
-		},
-		responses: [
-			{
-				questionId: '1',
-				questionType: 'textual',
-				response: 'Galinha',
-			},
-			{
-				questionId: '2',
-				questionType: 'numerical',
-				response: 55,
-			},
-		],
-	},
-	{
-		userId: 'PusOCJGtL6cSrAhN8oePaUybLR42',
-		location: {
-			city: 'Londrina',
-			country: 'Brasil',
-			district: 'Palhano 2',
-			geohashNearby: [Array],
-			number: '50',
-			postalCode: '86055-650',
-			state: 'Paraná',
-			street: 'Rua Guilherme Farel',
-		},
-		responses: [
-			{
-				questionId: '1',
-				questionType: 'textual',
-				response: 'Pato',
-			},
-			{
-				questionId: '2',
-				questionType: 'numerical',
-				response: 30,
-			},
-		],
-	}
-]
+const groupQuestionsByQuestionType = (questionType) => {
+	const allResponses = pollData.privateResponses.map((poll) => poll.responses)
+	const listOfResponses = [].concat(...allResponses)
+
+	const groupedByQuestionId = listOfResponses.reduce((total, response) => {
+		const { questionId, ...rest } = response
+		total[questionId] = total[questionId] || []
+		total[questionId].push(rest)
+		return total
+	}, {})
+
+	const allResponsesByQuestion = pollData.questions.reduce((total, poll) => {
+		if (poll.questionType !== questionType) return total
+		return (
+			[
+				...total,
+				{
+					...poll,
+					responses: groupedByQuestionId[poll.questionId]
+				}
+			]
+		)
+	}, [])
+
+	return allResponsesByQuestion
+}
 
 const renderHtmlHeader = () => (
 	<head>
@@ -78,7 +159,7 @@ const renderHtmlHeader = () => (
 )
 
 const renderPollHeader = () => {
-	const numberOfResponses = ` ${pollData.length}`
+	const numberOfResponses = ` ${pollData.privateResponses.length}`
 
 	return (
 		<>
@@ -96,61 +177,82 @@ const renderPollHeader = () => {
 	)
 }
 
-const renderSatisfactionGraph = () => {
+const renderBinaryGraph = () => {
+	const allResponsesByQuestion = groupQuestionsByQuestionType('binary')
+	const binaryLabels = ['Sim','Não']
 
-	const satisfactionValues = [
-		['Muito satisfeito', 35, '35%'],
-		['Satisfeito', 15, '15%'],
-		['Mais ou menos', 20, '20%'],
-		['Insatisfeito', 25, '25%'],
-		['Muito insatisfeito', 15, '15%']
-	]
+	return allResponsesByQuestion.map((questionWithResponses) => {
+		const satisfactionValues = binaryLabels.map((label, index) => {
+			const responses = questionWithResponses.responses.filter((response) => response.response === (index + 1))
+			const percentage = (responses.length / questionWithResponses.responses.length) * 100
+			return [label, responses.length, percentage.toFixed(2) + '%']
+		})
 
-	return (
-		<div className="card">
-			<div className="card-content">
-				<h3 className="card-title">Gráfico de Barras Horizontais 1</h3>
-				{
-					satisfactionValues.map((satisfaction, index) => (
-						<div className="bar" key={index}>
-							<div className="bar-label">{satisfaction[0]}</div>
-							<div className={"bar-base" + (index === 0 ? " bar-base-first" : "") + (index === 4 ? " bar-base-last" : "")}></div>
-							<div className="bar-progress">
-								<div className="bar-progress-inner" style={{ width: satisfaction[2] }}></div>
+		return (
+			<>
+			<div className="card" key={questionWithResponses.questionId}>
+				<div className="card-content">
+					<h3 className="card-title">{questionWithResponses.question}</h3>
+					{
+						satisfactionValues.map((satisfaction, index) => (
+							<div className="bar" key={index}>
+								<div className="bar-label">{satisfaction[0]}</div>
+								<div className={"bar-base" + (index === 0 ? " bar-base-first" : "") + (index === 4 ? " bar-base-last" : "")}></div>
+								<div className="bar-progress">
+									<div className="bar-progress-inner" style={{ width: satisfaction[2] }}></div>
+								</div>
+								<div className="bar-progress-text">{satisfaction[1]}</div>
+								<div className="bar-progress-text">{satisfaction[2]}</div>
 							</div>
-							<div className="bar-progress-text">{satisfaction[1]}</div>
-							<div className="bar-progress-text">{satisfaction[2]}</div>
-						</div>
-					))
-				}
-			</div>
-		</div >
-	)
+						))
+					}
+				</div>
+			</div >
+			<br/>
+			</>
+		)
+	})
+}
+
+const renderSatisfactionGraph = () => {
+	const allResponsesByQuestion = groupQuestionsByQuestionType('satisfaction')
+	const satisfactionLabels = ['Muito satisfeito','Satisfeito','Mais ou menos','Insatisfeito','Muito insatisfeito']
+
+	return allResponsesByQuestion.map((questionWithResponses) => {
+		const satisfactionValues = satisfactionLabels.map((label, index) => {
+			const responses = questionWithResponses.responses.filter((response) => response.response === (index + 1))
+			const percentage = (responses.length / questionWithResponses.responses.length) * 100
+			return [label, responses.length, percentage.toFixed(2) + '%']
+		})
+
+		return (
+			<>
+			<div className="card" key='xa'>
+				<div className="card-content">
+					<h3 className="card-title">{questionWithResponses.question}</h3>
+					{
+						satisfactionValues.map((satisfaction, index) => (
+							<div className="bar" key={index}>
+								<div className="bar-label">{satisfaction[0]}</div>
+								<div className={"bar-base" + (index === 0 ? " bar-base-first" : "") + (index === 4 ? " bar-base-last" : "")}></div>
+								<div className="bar-progress">
+									<div className="bar-progress-inner" style={{ width: satisfaction[2] }}></div>
+								</div>
+								<div className="bar-progress-text">{satisfaction[1]}</div>
+								<div className="bar-progress-text">{satisfaction[2]}</div>
+							</div>
+						))
+					}
+				</div>
+			</div >
+			<br/>
+			</>
+		)
+	})
 }
 
 const renderTextualResponses = () => {
-	const allResponses = pollData.map((poll) => poll.responses)
-	const listOfResponses = [].concat(...allResponses)
-
-	const groupedByQuestionId = listOfResponses.reduce((total, response) => {
-		const { questionId, ...rest } = response
-		total[questionId] = total[questionId] || []
-		total[questionId].push(rest)
-		return total
-	}, {})
-
-	const allResponsesByQuestion = pollQuestion.questions.reduce((total, poll) => {
-		if (poll.questionType !== 'textual') return total
-		return (
-			[
-				...total,
-				{
-					...poll,
-					responses: groupedByQuestionId[poll.questionId]
-				}
-			]
-		)
-	}, [])
+	const allResponsesByQuestion = groupQuestionsByQuestionType('textual')
 
 	return allResponsesByQuestion.map((poll) => {
 		return (
@@ -184,7 +286,9 @@ function App() {
 			{renderHtmlHeader()}
 			<body className='body'>
 				{renderPollHeader()}
-				{/* {renderSatisfactionGraph()} */}
+				{renderBinaryGraph()}
+				<br />
+				{renderSatisfactionGraph()}
 				<br />
 				{renderTextualResponses()}
 				<br />
