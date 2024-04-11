@@ -17,6 +17,7 @@
   /* border-right-width: 20px; */
   border-radius: 25px;
   border-right-width: 15px;
+  margin-bottom: 15px;
 }
 
 .card-content {
@@ -55,7 +56,7 @@
   width: 170px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .bar-progress {
@@ -68,8 +69,31 @@
 
 .bar-progress-inner {
   height: 100%;
-  background-color: #4caf50;
   border-radius: 0px 10px 10px 0px;
+}
+
+.orange3 {
+  background-color: #FA9938;
+}
+
+.red3 {
+  background-color: #E84F30;
+}
+
+.red1 {
+  background-color: #F3A797;
+}
+
+.yellow3 {
+  background-color: #FBCE37;
+}
+
+.green1 {
+  background-color: #88D0AC;
+}
+
+.green3 {
+  background-color: #12A159;
 }
 
 .bar-progress-text {
