@@ -1,47 +1,193 @@
 /* eslint-disable react/react-in-jsx-scope */
 import './App.css'
 
-const poll = [{
-	userId: 'PusOCJGtL6cSrAhN8oePaUybLR42',
-	location: {
-		city: 'Londrina',
-		country: 'Brasil',
-		district: 'Palhano 2',
-		geohashNearby: [Array],
-		number: '50',
-		postalCode: '86055-650',
-		state: 'Paraná',
-		street: 'Rua Guilherme Farel',
-	},
-	responses: [
+const pollQuestion = {
+	questions: [
 		{
-			questionId: '',
-			questionType: 'textual',
-			response: 'legal',
+			questionId: '1',
+			question: 'Quem veio primeiro, o ovo ou a galinha?',
+			questionType: 'textual'
 		},
-	],
-},
+		{
+			questionId: '2',
+			question: 'Escolha um número de 100 a 200?',
+			questionType: 'numeric'
+		}
+	]
+}
+
+const pollData = [
+	{
+		userId: 'PusOCJGtL6cSrAhN8oePaUybLR42',
+		location: {
+			city: 'Londrina',
+			country: 'Brasil',
+			district: 'Palhano 2',
+			geohashNearby: [Array],
+			number: '50',
+			postalCode: '86055-650',
+			state: 'Paraná',
+			street: 'Rua Guilherme Farel',
+		},
+		responses: [
+			{
+				questionId: '1',
+				questionType: 'textual',
+				response: 'Galinha',
+			},
+			{
+				questionId: '2',
+				questionType: 'numerical',
+				response: 55,
+			},
+		],
+	},
+	{
+		userId: 'PusOCJGtL6cSrAhN8oePaUybLR42',
+		location: {
+			city: 'Londrina',
+			country: 'Brasil',
+			district: 'Palhano 2',
+			geohashNearby: [Array],
+			number: '50',
+			postalCode: '86055-650',
+			state: 'Paraná',
+			street: 'Rua Guilherme Farel',
+		},
+		responses: [
+			{
+				questionId: '1',
+				questionType: 'textual',
+				response: 'Pato',
+			},
+			{
+				questionId: '2',
+				questionType: 'numerical',
+				response: 30,
+			},
+		],
+	}
 ]
+
+const renderHtmlHeader = () => (
+	<head>
+		<meta charset={'UTF-8'} />
+		<meta name={'viewport'} content={'width=device-width, initial-scale=1.0'} />
+		<title>{'Gráfico de Barras Horizontais'}</title>
+	</head>
+)
+
+const renderPollHeader = () => {
+	const numberOfResponses = ` ${pollData.length}`
+
+	return (
+		<>
+			<h2 className={'poll-title'}>{'Enquete - Nova praça pública dos imigrantes'}</h2>
+			<p className={'poll-description'}>
+				{'Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium rem voluptates'}
+				{'quaerat consectetur eaque optio. Laborum distinctio debitis impedit et doloremque ratione eius! Ea, amet!'}
+				{'Commodi recusandae officiis obcaecati magnam?'}
+			</p>
+			<p className={'responses-number'}>
+				{'Total de respostas:'}
+				<b>{numberOfResponses}</b>
+			</p>
+		</>
+	)
+}
+
+const renderSatisfactionGraph = () => {
+
+	const satisfactionValues = [
+		['Muito satisfeito', 35, '35%'],
+		['Satisfeito', 15, '15%'],
+		['Mais ou menos', 20, '20%'],
+		['Insatisfeito', 25, '25%'],
+		['Muito insatisfeito', 15, '15%']
+	]
+
+	return (
+		<div className="card">
+			<div className="card-content">
+				<h3 className="card-title">Gráfico de Barras Horizontais 1</h3>
+				{
+					satisfactionValues.map((satisfaction, index) => (
+						<div className="bar" key={index}>
+							<div className="bar-label">{satisfaction[0]}</div>
+							<div className={"bar-base" + (index === 0 ? " bar-base-first" : "") + (index === 4 ? " bar-base-last" : "")}></div>
+							<div className="bar-progress">
+								<div className="bar-progress-inner" style={{ width: satisfaction[2] }}></div>
+							</div>
+							<div className="bar-progress-text">{satisfaction[1]}</div>
+							<div className="bar-progress-text">{satisfaction[2]}</div>
+						</div>
+					))
+				}
+			</div>
+		</div >
+	)
+}
+
+const renderTextualResponses = () => {
+	const allResponses = pollData.map((poll) => poll.responses)
+	const listOfResponses = [].concat(...allResponses)
+
+	const groupedByQuestionId = listOfResponses.reduce((total, response) => {
+		const { questionId, ...rest } = response
+		total[questionId] = total[questionId] || []
+		total[questionId].push(rest)
+		return total
+	}, {})
+
+	const allResponsesByQuestion = pollQuestion.questions.reduce((total, poll) => {
+		if (poll.questionType !== 'textual') return total
+		return (
+			[
+				...total,
+				{
+					...poll,
+					responses: groupedByQuestionId[poll.questionId]
+				}
+			]
+		)
+	}, [])
+
+	return allResponsesByQuestion.map((poll) => {
+		return (
+			<>
+				<div className="card" key={poll.questionId}>
+					<div className="card-content">
+						<h3 className="card-title">{poll.question}</h3>
+						{
+							poll.responses.map((response, index, responses) => {
+								const isLastItem = index === responses.length - 1
+								return (
+									<div className={"long-text-container" + (isLastItem ? " last-item" : "")} key={response.questionId}>
+										<ul>
+											<li className="long-text">{response.response}</li>
+										</ul>
+									</div>
+								)
+							})
+						}
+					</div>
+				</div>
+				<br />
+			</>
+		)
+	})
+}
 
 function App() {
 	return (
 		<html lang={'pt-br'}>
-			<head>
-				<meta charset={'UTF-8'} />
-				<meta name={'viewport'} content={'width=device-width, initial-scale=1.0'} />
-				<title>{'Gráfico de Barras Horizontais'}</title>
-			</head>
-			<body>
-				<h2 className={'poll-title'}>{'Enquete - Nova praça pública dos imigrantes'}</h2>
-				<p className={'poll-description'}>
-					{'Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium rem voluptates'}
-					{'quaerat consectetur eaque optio. Laborum distinctio debitis impedit et doloremque ratione eius! Ea, amet!'}
-					{'Commodi recusandae officiis obcaecati magnam?'}
-				</p>
-				<p className={'responses-number'}>
-					{'Total de respostas:'}
-					<b>{'350'}</b>
-				</p>
+			{renderHtmlHeader()}
+			<body className='body'>
+				{renderPollHeader()}
+				{/* {renderSatisfactionGraph()} */}
+				<br />
+				{renderTextualResponses()}
+				<br />
 			</body>
 		</html>
 	)
@@ -53,110 +199,14 @@ export default App
 
 <html lang="pt-br">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Gráfico de Barras Horizontais</title>
-</head>
-
 <body>
-	<h2 class="poll-title">Enquete - Nova praça pública dos imigrantes</h2>
-	<p class="poll-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium rem voluptates
-		quaerat consectetur eaque optio. Laborum distinctio debitis impedit et doloremque ratione eius! Ea, amet!
-		Commodi recusandae officiis obcaecati magnam?
-	</p>
-	<p class="responses-number">Total de respostas: <b>350</b></p>
-
-	<div class="card">
-		<div class="card-content">
-			<h3 class="card-title">Gráfico de Barras Horizontais 2</h3>
-			<div class="long-text-container">
+	
+	<div className="card">
+		<div className="card-content">
+			<h3 className="card-title">Gráfico de Barras Horizontais 2</h3>
+			<div className="long-text-container">
 				<ul>
-					<li class="long-text">
-						Lorem ipsum dolor sit amet consectetur. Vel donec tellus aliquam erat lacus amet
-						pellentesque. Hac sem luctus arcu pretium lectus pellentesque. Aliquet tellus tincidunt
-						consequat faucibus dignissim ultricies magna commodo penatibus. Aliquam egestas sit.
-					</li>
-				</ul>
-			</div>
-			<div class="long-text-container last-item">
-				<ul>
-					<li class="long-text">
-						Lorem ipsum dolor sit amet consectetur. Vel donec tellus aliquam erat lacus amet
-						pellentesque. Hac sem luctus arcu pretium lectus pellentesque. Aliquet tellus tincidunt
-						consequat faucibus dignissim ultricies magna commodo penatibus. Aliquam egestas sit.
-					</li>
-				</ul>
-			</div>
-		</div>
-	</div>
-	<br />
-
-	<div class="card">
-		<div class="card-content">
-			<h3 class="card-title">Gráfico de Barras Horizontais 1</h3>
-			<div class="bar">
-				<div class="bar-label">Muito satisfeito |
-					<svg width="27" height="23" viewBox="0 0 27 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path
-							d="M14.25 22.5C14.3755 22.5 14.5005 22.4979 14.625 22.4939C14.7495 22.4979 14.8745 22.5 15 22.5C21.2132 22.5 26.2499 17.4632 26.2499 11.25C26.2499 5.0368 21.2132 0 15 0C14.8745 0 14.7495 0.00205469 14.625 0.00613228C14.5005 0.00205469 14.3755 0 14.25 0C14.1245 0 13.9995 0.00205469 13.875 0.00613228C13.7505 0.0020547 13.6255 0 13.5 0C13.3745 0 13.2495 0.00205467 13.125 0.00613225C13.0005 0.00205468 12.8755 0 12.75 0C12.6245 0 12.4995 0.0020547 12.375 0.00613229C12.2505 0.0020547 12.1255 0 12 0C11.8745 0 11.7495 0.00205469 11.625 0.00613227C11.5005 0.00205469 11.3755 0 11.25 0C5.03678 0 0 5.0368 0 11.25C0 17.4632 5.03678 22.5 11.25 22.5C11.3755 22.5 11.5005 22.4979 11.625 22.4939C11.7495 22.4979 11.8745 22.5 12 22.5C12.1255 22.5 12.2505 22.4979 12.375 22.4939C12.4995 22.4979 12.6245 22.5 12.75 22.5C12.8755 22.5 13.0005 22.4979 13.125 22.4939C13.2495 22.4979 13.3745 22.5 13.5 22.5C13.6255 22.5 13.7505 22.4979 13.875 22.4939C13.9995 22.4979 14.1245 22.5 14.25 22.5Z"
-							fill="black" />
-						<path fill-rule="evenodd" clip-rule="evenodd"
-							d="M11.25 21C16.6347 21 21 16.6348 21 11.25C21 5.86522 16.6347 1.5 11.25 1.5C5.86521 1.5 1.5 5.86522 1.5 11.25C1.5 16.6348 5.86521 21 11.25 21ZM8.43766 9.75C8.95543 9.75 9.37516 9.33027 9.37516 8.8125C9.37516 8.29473 8.95543 7.875 8.43766 7.875C7.9199 7.875 7.50017 8.29473 7.50017 8.8125C7.50017 9.33027 7.9199 9.75 8.43766 9.75ZM15.7541 13.1156C15.8711 12.8331 15.961 12.5409 16.0229 12.243C16.1354 11.7023 15.6774 11.25 15.1251 11.25H7.37517C6.82288 11.25 6.36488 11.7023 6.47738 12.243C6.53936 12.5409 6.62925 12.8331 6.74626 13.1156C6.99125 13.707 7.35034 14.2445 7.80302 14.6971C8.2557 15.1498 8.79312 15.5089 9.38458 15.7539C9.97604 15.9989 10.61 16.125 11.2502 16.125C11.8904 16.125 12.5243 15.9989 13.1157 15.7539C13.7072 15.5089 14.2446 15.1498 14.6973 14.6971C15.15 14.2445 15.5091 13.707 15.7541 13.1156ZM15.0001 8.8125C15.0001 9.33027 14.5804 9.75 14.0627 9.75C13.5449 9.75 13.1252 9.33027 13.1252 8.8125C13.1252 8.29473 13.5449 7.875 14.0627 7.875C14.5804 7.875 15.0001 8.29473 15.0001 8.8125Z"
-							fill="white" />
-					</svg>
-					|
-				</div>
-				<div class="bar-base bar-base-first"></div>
-				<div class="bar-progress">
-					<div class="bar-progress-inner" style="width: 50%;"></div>
-				</div>
-				<div class="bar-progress-text">65</div>
-				<div class="bar-progress-text">10%</div>
-			</div>
-			<div class="bar">
-				<div class="bar-label">Satisfeito | |</div>
-				<div class="bar-base"></div>
-				<div class="bar-progress">
-					<div class="bar-progress-inner" style="width: 80%;"></div>
-				</div>
-				<div class="bar-progress-text">80%</div>
-			</div>
-			<div class="bar">
-				<div class="bar-label">Mais ou menos | |</div>
-				<div class="bar-base"></div>
-				<div class="bar-progress">
-					<div class="bar-progress-inner" style="width: 40%;"></div>
-				</div>
-				<div class="bar-progress-text">40%</div>
-			</div>
-			<div class="bar">
-				<div class="bar-label">Insatisfeito | |</div>
-				<div class="bar-base"></div>
-				<div class="bar-progress">
-					<div class="bar-progress-inner" style="width: 70%;"></div>
-				</div>
-				<div class="bar-progress-text">70%</div>
-			</div>
-			<div class="bar">
-				<div class="bar-label">Muito insatisfeito | |</div>
-				<div class="bar-base bar-base-last"></div>
-				<div class="bar-progress">
-					<div class="bar-progress-inner" style="width: 90%;"></div>
-				</div>
-				<div class="bar-progress-text">90%</div>
-			</div>
-		</div>
-	</div>
-
-	<br />
-
-	<div class="card">
-		<div class="card-content">
-			<h3 class="card-title">Gráfico de Barras Horizontais 2</h3>
-			<div class="long-text-container">
-				<ul>
-					<li class="long-text">
+					<li className="long-text">
 						Lorem ipsum dolor sit amet consectetur. Vel donec tellus aliquam erat lacus amet
 						pellentesque. Hac sem luctus arcu pretium lectus pellentesque. Aliquet tellus tincidunt
 						consequat faucibus dignissim ultricies magna commodo penatibus. Aliquam egestas sit.
@@ -164,18 +214,18 @@ export default App
 				</ul>
 			</div>
 
-			<h3 class="card-title">Gráfico de Barras Horizontais 3</h3>
-			<div class="other-text-container">
+			<h3 className="card-title">Gráfico de Barras Horizontais 3</h3>
+			<div className="other-text-container">
 				31
 			</div>
 
-			<h3 class="card-title">Gráfico de Barras Horizontais 3</h3>
-			<div class="other-text-container">
+			<h3 className="card-title">Gráfico de Barras Horizontais 3</h3>
+			<div className="other-text-container">
 				Sim
 			</div>
 
-			<h3 class="card-title">Gráfico de Barras Horizontais 3</h3>
-			<div class="other-text-container last-item">
+			<h3 className="card-title">Gráfico de Barras Horizontais 3</h3>
+			<div className="other-text-container last-item">
 				<svg width="27" height="23" viewBox="0 0 27 23" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path
 						d="M14.25 22.5C14.3755 22.5 14.5005 22.4979 14.625 22.4939C14.7495 22.4979 14.8745 22.5 15 22.5C21.2132 22.5 26.2499 17.4632 26.2499 11.25C26.2499 5.0368 21.2132 0 15 0C14.8745 0 14.7495 0.00205469 14.625 0.00613228C14.5005 0.00205469 14.3755 0 14.25 0C14.1245 0 13.9995 0.00205469 13.875 0.00613228C13.7505 0.0020547 13.6255 0 13.5 0C13.3745 0 13.2495 0.00205467 13.125 0.00613225C13.0005 0.00205468 12.8755 0 12.75 0C12.6245 0 12.4995 0.0020547 12.375 0.00613229C12.2505 0.0020547 12.1255 0 12 0C11.8745 0 11.7495 0.00205469 11.625 0.00613227C11.5005 0.00205469 11.3755 0 11.25 0C5.03678 0 0 5.0368 0 11.25C0 17.4632 5.03678 22.5 11.25 22.5C11.3755 22.5 11.5005 22.4979 11.625 22.4939C11.7495 22.4979 11.8745 22.5 12 22.5C12.1255 22.5 12.2505 22.4979 12.375 22.4939C12.4995 22.4979 12.6245 22.5 12.75 22.5C12.8755 22.5 13.0005 22.4979 13.125 22.4939C13.2495 22.4979 13.3745 22.5 13.5 22.5C13.6255 22.5 13.7505 22.4979 13.875 22.4939C13.9995 22.4979 14.1245 22.5 14.25 22.5Z"
@@ -190,7 +240,7 @@ export default App
 
 	<br />
 
-	<h4 class="author">Formulário criado utilizando o aplicativo corre.social</h4>
+	<h4 className="author">Formulário criado utilizando o aplicativo corre.social</h4>
 	<svg width="138" height="36" viewBox="0 0 138 36" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path fill-rule="evenodd" clip-rule="evenodd"
 			d="M137.235 26.8056C137.235 29.2392 136.259 31.5741 134.526 33.2945C132.785 35.0156 130.431 35.9823 127.975 35.9823H118.711C117.373 35.9823 116.062 35.695 114.864 35.1528C113.155 35.6909 111.333 35.9823 109.444 35.9823H100.181C97.7529 35.9823 95.4418 35.5023 93.3313 34.635C92.3548 35.4746 91.0795 35.9823 89.6875 35.9823H55.7241C55.1891 35.9823 54.6726 35.9079 54.184 35.768C53.2758 35.9086 52.3451 35.9823 51.3973 35.9823H42.135C39.6117 35.9823 37.2105 35.4631 35.0331 34.5302C32.8543 35.4631 30.4538 35.9823 27.9318 35.9823H18.6689C8.78776 35.9823 0.764648 28.0332 0.764648 18.2408C0.764648 8.44902 8.78776 0.5 18.6689 0.5H27.9318C30.4538 0.5 32.8543 1.01781 35.0331 1.95271C37.2105 1.01781 39.6117 0.5 42.135 0.5H51.3973C52.9128 0.5 54.3846 0.68725 55.7903 1.03944C56.5183 0.693334 57.3331 0.5 58.1942 0.5H95.8574C96.393 0.5 96.9075 0.574359 97.3974 0.713614C98.3029 0.573007 99.233 0.5 100.181 0.5H109.444C119.117 0.5 127.009 8.11845 127.338 17.627H127.975C130.431 17.627 132.785 18.5937 134.526 20.3141C136.259 22.0351 137.235 24.3687 137.235 26.8023V26.8056C137.235 28.8329 137.235 28.8309 137.235 26.8056Z"
