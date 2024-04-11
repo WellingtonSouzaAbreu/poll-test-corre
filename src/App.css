@@ -62,7 +62,7 @@
 .bar-progress {
   flex: 1;
   height: 20px;
-  background-color: #ddd;
+  background-color: #eeeeef;
   border-radius: 0px 10px 10px 0px;
   overflow: hidden;
 }
@@ -107,18 +107,17 @@
 }
 
 .long-text-container {
-  background-color: #ddd;
+  background-color: #eeeeef;
   padding: 5px;
   border-radius: 10px;
   margin-bottom: 15px;
 }
 
 .other-text-container {
-  background-color: #ddd;
+  background-color: #eeeeef;
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 15px;
-  font-weight: bold;
 }
 
 .last-item {

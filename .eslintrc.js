@@ -11,6 +11,6 @@ module.exports = {
 		ecmaVersion: 12,
 		sourceType: "module",
 	},
-	plugins: ["react", "react/recommended"],
+	plugins: ["react"],
 	rules: {}
 }

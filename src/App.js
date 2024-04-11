@@ -12,16 +12,16 @@ const pollData = {
 		{
 			questionId: '2',
 			question: 'Escolha um número de 0 a 100?',
-			questionType: 'numeric'
+			questionType: 'numerical'
 		},
 		{
 			questionId: '3',
-			question: 'O quanto você gosta de nirvana?',
+			question: 'O que você achou da morte do homem de ferro?',
 			questionType: 'satisfaction'
 		},
 		{
 			questionId: '4',
-			question: 'O quanto você gosta da música buddy?',
+			question: 'Está satisfeito com o substituto do capitão américa?',
 			questionType: 'satisfaction'
 		},
 		{
@@ -59,11 +59,6 @@ const pollData = {
 					questionId: '2',
 					questionType: 'numerical',
 					response: 55,
-				},
-				{
-					questionId: '2',
-					questionType: 'numerical',
-					response: 10,
 				},
 
 				{
@@ -210,6 +205,23 @@ const groupQuestionsByQuestionType = (questionType) => {
 	return allResponsesByQuestion
 }
 
+const groupQuestionsResponsesByUser = (questionType) => {
+	const groupedByUser = pollData.privateResponses.map((pollResponse) => {
+		const responsesWithQuestion = pollResponse.responses.map((response) => {
+			const { questionId, ...rest } = response
+			const questionText = pollData.questions.find((question) => question.questionId === questionId)
+			return {
+				question: questionText.question,
+				...rest
+			}
+		})
+		
+		return responsesWithQuestion
+	})
+
+	return groupedByUser
+}
+
 const renderHtmlHeader = () => (
 	// Deve ser "head"
 	<>
@@ -284,7 +296,7 @@ const renderBinaryGraph = () => {
 }
 
 const renderNumericalGraph = () => {
-	const allResponsesByQuestion = groupQuestionsByQuestionType('numeric')
+	const allResponsesByQuestion = groupQuestionsByQuestionType('numerical')
 
 	return allResponsesByQuestion.map((questionWithResponses, index) => {
 		const ordenedResponses = questionWithResponses.responses.sort((a, b) => a.response - b.response)
@@ -328,17 +340,6 @@ const renderNumericalGraph = () => {
 }
 
 const renderSatisfactionGraph = () => {
-	const getSatisfactionBarColor = (value) => {
-		console.log(value)
-		
-		if (value === 'Muito satisfeito') return ' green3'
-		if (value === 'Satisfeito') return ' green1'
-		if (value === 'Mais ou menos') return ' yellow3'
-		if (value === 'Insatisfeito') return ' red1'
-		if (value === 'Muito insatisfeito') return ' red3'
-		return ' orange3'
-	}
-	
 	const allResponsesByQuestion = groupQuestionsByQuestionType('satisfaction')
 	const satisfactionLabels = ['Muito satisfeito','Satisfeito','Mais ou menos','Insatisfeito','Muito insatisfeito']
 
@@ -372,6 +373,26 @@ const renderSatisfactionGraph = () => {
 	})
 }
 
+const getSatisfactionBarColor = (value) => {
+	console.log(value)
+	
+	if (value === 'Muito satisfeito') return ' green3'
+	if (value === 'Satisfeito') return ' green1'
+	if (value === 'Mais ou menos') return ' yellow3'
+	if (value === 'Insatisfeito') return ' red1'
+	if (value === 'Muito insatisfeito') return ' red3'
+	return ' orange3'
+}
+
+const getSatisfactionLabel = (value) => {
+	if (value === 1) return 'Muito insatisfeito'
+	if (value === 2) return 'Insatisfeito'
+	if (value === 3) return 'Mais ou menos'
+	if (value === 4) return 'Satisfeito'
+	if (value === 5) return 'Muito satisfeito'
+	return 'Não avaliado'
+}
+
 const renderTextualResponses = () => {
 	const allResponsesByQuestion = groupQuestionsByQuestionType('textual')
 
@@ -399,7 +420,61 @@ const renderTextualResponses = () => {
 }
 
 const renderIndividualResponses = ()=> {
-	return <></>
+	const groupedQuestionsByUser = groupQuestionsResponsesByUser()
+	// console.log(groupedQuestionsByUser)
+	
+	const renderRelativeQuestionType = (question, questionType, response, index) => {
+		switch(questionType){
+			case 'textual': return (
+				<div key={index}>
+					<h3 className="card-title">{question}</h3>
+					<div className="long-text-container">
+							<ul>
+								<li className="long-text">{response}</li>
+							</ul>
+					</div>
+				</div>
+			)
+			
+			case 'numerical': return (
+				<div>
+					<h3 className="card-title">{question}</h3>
+					<div className="other-text-container">{response}</div>
+				</div>
+			)
+
+			case 'binary': return (
+				<div>
+					<h3 className="card-title">{question}</h3>
+					<div className="other-text-container">{response ? 'Sim' : 'Não'}</div>
+				</div>
+			)
+
+			case 'satisfaction': return (
+				<div>
+					<h3 className="card-title">{question}</h3>
+						<div className="other-text-container">
+							{getSatisfactionLabel(response)}
+						</div>
+					</div>
+			)
+		}
+	}
+	
+	return groupedQuestionsByUser.map((userResponses, index) => {
+		console.log(userResponses)
+		return (
+			<div className="card" key={index}>
+				<div className="card-content">
+					{
+						userResponses.map((questionResponse, index) => {
+							return renderRelativeQuestionType(questionResponse.question,questionResponse.questionType, questionResponse.response, index)
+						})
+					}
+				</div>
+			</div>
+		)
+	})
 }
 
 const renderFooter = () => (
@@ -435,57 +510,3 @@ function App() {
 }
 
 export default App
-
-/* 
-
-<html lang="pt-br">
-
-<body>
-	<div className="card">
-		<div className="card-content">
-			<h3 className="card-title">Gráfico de Barras Horizontais 2</h3>
-			<div className="long-text-container">
-				<ul>
-					<li className="long-text">
-						Lorem ipsum dolor sit amet consectetur. Vel donec tellus aliquam erat lacus amet
-						pellentesque. Hac sem luctus arcu pretium lectus pellentesque. Aliquet tellus tincidunt
-						consequat faucibus dignissim ultricies magna commodo penatibus. Aliquam egestas sit.
-					</li>
-				</ul>
-			</div>
-
-			<h3 className="card-title">Gráfico de Barras Horizontais 3</h3>
-			<div className="other-text-container">
-				31
-			</div>
-
-			<h3 className="card-title">Gráfico de Barras Horizontais 3</h3>
-			<div className="other-text-container">
-				Sim
-			</div>
-
-			<h3 className="card-title">Gráfico de Barras Horizontais 3</h3>
-			<div className="other-text-container last-item">
-				<svg width="27" height="23" viewBox="0 0 27 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path
-						d="M14.25 22.5C14.3755 22.5 14.5005 22.4979 14.625 22.4939C14.7495 22.4979 14.8745 22.5 15 22.5C21.2132 22.5 26.2499 17.4632 26.2499 11.25C26.2499 5.0368 21.2132 0 15 0C14.8745 0 14.7495 0.00205469 14.625 0.00613228C14.5005 0.00205469 14.3755 0 14.25 0C14.1245 0 13.9995 0.00205469 13.875 0.00613228C13.7505 0.0020547 13.6255 0 13.5 0C13.3745 0 13.2495 0.00205467 13.125 0.00613225C13.0005 0.00205468 12.8755 0 12.75 0C12.6245 0 12.4995 0.0020547 12.375 0.00613229C12.2505 0.0020547 12.1255 0 12 0C11.8745 0 11.7495 0.00205469 11.625 0.00613227C11.5005 0.00205469 11.3755 0 11.25 0C5.03678 0 0 5.0368 0 11.25C0 17.4632 5.03678 22.5 11.25 22.5C11.3755 22.5 11.5005 22.4979 11.625 22.4939C11.7495 22.4979 11.8745 22.5 12 22.5C12.1255 22.5 12.2505 22.4979 12.375 22.4939C12.4995 22.4979 12.6245 22.5 12.75 22.5C12.8755 22.5 13.0005 22.4979 13.125 22.4939C13.2495 22.4979 13.3745 22.5 13.5 22.5C13.6255 22.5 13.7505 22.4979 13.875 22.4939C13.9995 22.4979 14.1245 22.5 14.25 22.5Z"
-						fill="black" />
-					<path fill-rule="evenodd" clip-rule="evenodd"
-						d="M11.25 21C16.6347 21 21 16.6348 21 11.25C21 5.86522 16.6347 1.5 11.25 1.5C5.86521 1.5 1.5 5.86522 1.5 11.25C1.5 16.6348 5.86521 21 11.25 21ZM8.43766 9.75C8.95543 9.75 9.37516 9.33027 9.37516 8.8125C9.37516 8.29473 8.95543 7.875 8.43766 7.875C7.9199 7.875 7.50017 8.29473 7.50017 8.8125C7.50017 9.33027 7.9199 9.75 8.43766 9.75ZM15.7541 13.1156C15.8711 12.8331 15.961 12.5409 16.0229 12.243C16.1354 11.7023 15.6774 11.25 15.1251 11.25H7.37517C6.82288 11.25 6.36488 11.7023 6.47738 12.243C6.53936 12.5409 6.62925 12.8331 6.74626 13.1156C6.99125 13.707 7.35034 14.2445 7.80302 14.6971C8.2557 15.1498 8.79312 15.5089 9.38458 15.7539C9.97604 15.9989 10.61 16.125 11.2502 16.125C11.8904 16.125 12.5243 15.9989 13.1157 15.7539C13.7072 15.5089 14.2446 15.1498 14.6973 14.6971C15.15 14.2445 15.5091 13.707 15.7541 13.1156ZM15.0001 8.8125C15.0001 9.33027 14.5804 9.75 14.0627 9.75C13.5449 9.75 13.1252 9.33027 13.1252 8.8125C13.1252 8.29473 13.5449 7.875 14.0627 7.875C14.5804 7.875 15.0001 8.29473 15.0001 8.8125Z"
-						fill="white" />
-				</svg>
-			</div>
-		</div>
-	</div>
-	<br />
-</body>
-
-</html>
-
-
-*/
-
-/* 
-
-
-*/
