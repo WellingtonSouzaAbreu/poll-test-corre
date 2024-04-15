@@ -59,6 +59,10 @@
   justify-content: center;
 }
 
+.bar-label-spaced {
+  justify-content: space-between;
+}
+
 .bar-progress {
   flex: 1;
   height: 20px;
@@ -97,9 +101,15 @@
 }
 
 .bar-progress-text {
-  margin-left: 15px;
+  margin: 0 15px 0 15px;
+  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bold {
   font-weight: bold;
-  width: 50px;
 }
 
 .author {
@@ -139,6 +149,12 @@
   margin-bottom: 30px;
 }
 
+.poll-info {
+  margin: 5px;
+  align-self: flex-start;
+}
+
 .responses-number {
+  margin-top: 40px;
   align-self: flex-start;
 }
