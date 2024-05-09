@@ -1,0 +1,90 @@
+.body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.card {
+    position: relative;
+    width: 100%;
+    height: auto;
+    background-color: #000000;
+    border: 1px solid #000000;
+    border-width: 5px;
+    /* border-right-width: 20px; */
+    border-radius: 25px;
+    border-right-width: 15px;
+    margin-bottom: 15px;
+}
+
+.card-content {
+    padding: 15px;
+    background-color: #ffffff;
+    border-radius: 20px;
+}
+
+.table-row {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px rgb(186, 186, 186) solid;
+}
+
+.cell-data {
+    display: flex;
+    flex: 1;
+    padding: 5px;
+    font-size: 0.8rem;
+}
+
+.cell-info {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    text-align: start;
+}
+
+.text-info {
+    display: flex;
+    flex: 1;
+    margin: 0px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.bold {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.author {
+    font-weight: 400;
+}
+
+.petition-title {
+    align-self: flex-start;
+    margin-top: 0px;
+    margin-bottom: 0;
+}
+
+.petition-description {
+    align-self: flex-start;
+    margin-bottom: 30px;
+}
+
+.petition-info {
+    margin: 5px;
+    align-self: flex-start;
+}
+
+.responses-number {
+    margin-top: 40px;
+    align-self: flex-start;
+}

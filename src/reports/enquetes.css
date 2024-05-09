@@ -1,0 +1,172 @@
+.body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.card {
+    position: relative;
+    width: 100%;
+    height: auto;
+    background-color: #000000;
+    border: 1px solid #000000;
+    border-width: 5px;
+    /* border-right-width: 20px; */
+    border-radius: 25px;
+    border-right-width: 15px;
+    margin-bottom: 15px;
+}
+
+.card-content {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 20px;
+}
+
+.card-title {
+    margin-bottom: 15px;
+    margin-top: 0px;
+}
+
+.bar {
+    display: flex;
+    align-items: center;
+}
+
+.bar-base {
+    background-color: black;
+    height: 30px;
+    width: 7px;
+}
+
+.bar-base-first {
+    border-radius: 10px 10px 0px 0px;
+}
+
+.bar-base-last {
+    border-radius: 0px 0px 10px 10px;
+}
+
+.bar-label {
+    text-align: right;
+    padding-right: 10px;
+    width: 170px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bar-label-spaced {
+    justify-content: space-between;
+}
+
+.bar-progress {
+    flex: 1;
+    height: 20px;
+    background-color: #eeeeef;
+    border-radius: 0px 10px 10px 0px;
+    overflow: hidden;
+}
+
+.bar-progress-inner {
+    height: 100%;
+    border-radius: 0px 10px 10px 0px;
+}
+
+.orange3 {
+    background-color: #FA9938;
+}
+
+.red3 {
+    background-color: #E84F30;
+}
+
+.red1 {
+    background-color: #F3A797;
+}
+
+.yellow3 {
+    background-color: #FBCE37;
+}
+
+.green1 {
+    background-color: #88D0AC;
+}
+
+.green3 {
+    background-color: #12A159;
+}
+
+.bar-progress-text {
+    margin: 0 15px 0 15px;
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.author {
+    font-weight: 400;
+}
+
+.long-text-container {
+    background-color: #eeeeef;
+    padding: 5px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.other-text-container {
+    background-color: #eeeeef;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+    display: flex;
+}
+
+.icon-container {
+    padding: 0px 10px 0px 0px;
+}
+
+.response-number {
+    align-self: flex-end;
+    text-align: end;
+    font-weight: bold;
+}
+
+.last-item {
+    margin-bottom: 0;
+}
+
+.long-text {
+    line-height: 23px;
+}
+
+.poll-title {
+    align-self: flex-start;
+    margin-top: 0px;
+    margin-bottom: 0;
+}
+
+.poll-description {
+    align-self: flex-start;
+    margin-bottom: 30px;
+}
+
+.poll-info {
+    margin: 5px;
+    align-self: flex-start;
+}
+
+.responses-number {
+    margin-top: 40px;
+    align-self: flex-start;
+}

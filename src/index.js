@@ -3,11 +3,14 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Enquetes from './reports/enquetes';
+import AbaixoAssinados from './reports/abaixoAssinados';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    {/* <Enquetes /> */}
+    <AbaixoAssinados/>
   </React.StrictMode>
 );
 
