@@ -9,8 +9,8 @@ import AbaixoAssinados from './reports/abaixoAssinados';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <Enquetes /> */}
-    <AbaixoAssinados/>
+    <Enquetes />
+   {/*  <AbaixoAssinados/> */}
   </React.StrictMode>
 );
 

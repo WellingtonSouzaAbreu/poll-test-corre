@@ -33,6 +33,12 @@ const pollData = {
 			questionId: '6',
 			question: 'Você tem pc com luizinhas?',
 			questionType: 'binary'
+		},
+		{
+			questionId: '7',
+			question: 'SELECT, você quer SELECT?',
+			questionType: 'select',
+			options: ['AAA','BBB','CCC','DDD']
 		}
 	],
 	privateResponses: [
@@ -58,12 +64,12 @@ const pollData = {
 				{
 					questionId: '2',
 					questionType: 'numerical',
-					response: '',
+					response: 2,
 				},
 				{
 					questionId: '2',
 					questionType: 'numerical',
-					response: '',
+					response: 4,
 				},
 
 				{
@@ -88,11 +94,31 @@ const pollData = {
 					questionType: 'binary',
 					response: true,
 				},
-
 				{
 					questionId: '6',
 					questionType: 'binary',
 					response: true,
+				},
+
+				{
+					questionId: '7',
+					questionType: 'select',
+					response: ['BBB']
+				},
+				{
+					questionId: '7',
+					questionType: 'select',
+					response: ['AAA','BBB']
+				},
+				{
+					questionId: '7',
+					questionType: 'select',
+					response: ['CCC', 'DDD']
+				},
+				{
+					questionId: '7',
+					questionType: 'select',
+					response: ['BBB']
 				},
 			],
 		},
@@ -183,6 +209,11 @@ const pollData = {
 					questionType: 'binary',
 					response: true,
 				},
+				{
+					questionId: '7',
+					questionType: 'select',
+					response: ['DDD', 'CCC'],
+				},
 			],
 		}
 	]
@@ -222,13 +253,13 @@ const groupQuestionsResponsesByUser = (questionType) => {
 			const questionText = pollData.questions.find((question) => question.questionId === questionId)
 			return {
 				question: questionText.question,
+				options: questionText.options || [],
 				...rest
 			}
 		})
 		
 		return responsesWithQuestion
 	})
-
 	return groupedByUser
 }
 
@@ -377,6 +408,54 @@ const renderNumericalGraph = () => {
 	})
 }
 
+const renderSelectGraph = () => {
+	const allResponsesByQuestion = groupQuestionsByQuestionType('select')
+
+	return allResponsesByQuestion.map((questionWithResponses, index) => {
+		const ordenedOptions = allResponsesByQuestion[0].options
+
+		const numericalValues = ordenedOptions.reduce((acc, label, index) => {
+			const responses = questionWithResponses.responses.filter((response) => response.response.includes(label))
+
+			const allSelectedOptions = [].concat(...questionWithResponses.responses.map((response) => response.response))
+			const percentage = (responses.length / allSelectedOptions.length) * 100
+
+			if(acc.find((item) => label.includes(item[0]))){
+				return [...acc]
+			}
+			
+			const numberOfSelections = allSelectedOptions.filter((opt) => opt === label).length
+			
+			return [...acc, [label, numberOfSelections, percentage.toFixed(2) + '%']]
+		}, [])
+
+		return (
+			<div className="card" key={index}>
+				<div className="card-content">
+					<h3 className="card-title">{questionWithResponses.question}</h3>
+					{
+						numericalValues.map((satisfaction, index, values) => {
+							const isLastItem = index === values.length - 1
+
+							return (
+								<div className="bar" key={index}>
+									<div className="bar-label">{satisfaction[0] || '(não responderam)'}</div>
+									<div className={"bar-base" + (index === 0 ? " bar-base-first" : "") + (isLastItem ? " bar-base-last" : "")}></div>
+									<div className="bar-progress">
+										<div className={"bar-progress-inner orange3"} style={{ width: satisfaction[2] }}></div>
+									</div>
+									<div className="bar-progress-text">{satisfaction[1]}</div>
+									<div className="bar-progress-text">{satisfaction[2]}</div>
+								</div>
+							)
+						})
+					}
+				</div>
+			</div >
+		)
+	})
+}
+
 const renderSatisfactionGraph = () => {
 	const allResponsesByQuestion = groupQuestionsByQuestionType('satisfaction')
 	const satisfactionLabels = ['Muito satisfeito','Satisfeito','Mais ou menos','Insatisfeito','Muito insatisfeito']
@@ -466,8 +545,8 @@ const renderSatisfactionIcon = (satisactionLabel) => {
 	)
 }
 
-const renderTextualResponses = () => {
-	const allResponsesByQuestion = groupQuestionsByQuestionType('textual')
+const renderTextualResponses = (type) => {
+	const allResponsesByQuestion = groupQuestionsByQuestionType(type || 'textual')
 
 	return allResponsesByQuestion.map((poll,index) => {
 		return (
@@ -480,14 +559,14 @@ const renderTextualResponses = () => {
 							return (
 								<div className={"long-text-container" + (isLastItem ? " last-item" : "")} key={index}>
 									<ul>
-										<li className="long-text">{response.response}</li>
+										<li className="long-text">{type === 'select' ? response.response.join(' - '): response.response}</li>
 									</ul>
 								</div>
 							)
 						})
 					}
 				</div>
-			</div>
+				</div>
 		)
 	})
 }
@@ -495,7 +574,7 @@ const renderTextualResponses = () => {
 const renderIndividualResponses = ()=> {
 	const groupedQuestionsByUser = groupQuestionsResponsesByUser()
 	
-	const renderRelativeQuestionType = (question, questionType, response, index) => {
+	const renderRelativeQuestionType = (question, questionType, response, index, options) => {
 		switch(questionType){
 			case 'textual': return (
 				<div key={index}>
@@ -505,6 +584,21 @@ const renderIndividualResponses = ()=> {
 								<li className="long-text">{response}</li>
 							</ul>
 					</div>
+				</div>
+			)
+
+			case 'select': return (
+				<div key={index}>
+					<h3 className="card-title">{ question }</h3>
+					{
+						options.map((option, index) => {
+							return (
+								<div className={"other-text-container " + ((response || []).includes(option) ? "green3" : "")} key={index}>
+									{option}
+								</div>
+							)
+						})
+					}
 				</div>
 			)
 			
@@ -534,13 +628,12 @@ const renderIndividualResponses = ()=> {
 	}
 	
 	return groupedQuestionsByUser.map((userResponses, index) => {
-		console.log(userResponses)
 		return (
 			<div className="card" key={index}>
 				<div className="card-content">
 					{
 						userResponses.map((questionResponse, index) => {
-							return renderRelativeQuestionType(questionResponse.question,questionResponse.questionType, questionResponse.response, index)
+							return renderRelativeQuestionType(questionResponse.question,questionResponse.questionType, questionResponse.response, index, questionResponse.options)
 						})
 					}
 				</div>
@@ -572,8 +665,10 @@ function Enquetes() {
 				{renderPollHeader()}
 				{renderBinaryGraph()}
 				{renderNumericalGraph()}
+				{renderSelectGraph()}
 				{renderSatisfactionGraph()}
 				{renderTextualResponses()}
+				{renderTextualResponses('select')}
 				{renderIndividualResponses()}
 				{renderFooter()}
 			</div>

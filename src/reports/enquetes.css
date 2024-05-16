@@ -92,12 +92,13 @@
     background-color: #FBCE37;
 }
 
-.green1 {
-    background-color: #88D0AC;
+.green1 p div {
+    background-color: #88D0AC !important;
 }
 
 .green3 {
-    background-color: #12A159;
+    background-color: #12A159 !important;
+    color: white;
 }
 
 .bar-progress-text {
